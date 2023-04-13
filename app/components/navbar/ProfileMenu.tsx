@@ -5,8 +5,15 @@ import { useCallback, useState } from "react";
 import ProfileItem from "./ProfileItem";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
 import useLoginModal from "@/app/hooks/useLoginModal";
+import { User } from "@prisma/client";
+import { signOut } from "next-auth/react";
+import { SafeUser } from "@/app/types";
+import useAdmissionModal from "@/app/hooks/useAdmissionModal";
 
-const ProfileMenu = () => {
+interface UserMenuProps {
+  currentUser?: SafeUser | null;
+}
+const ProfileMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = useCallback(() => {
@@ -15,10 +22,24 @@ const ProfileMenu = () => {
 
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
+  const admissionModal = useAdmissionModal();
+
+  const onAdmission = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+
+    // open admission modal
+
+     admissionModal.onOpen();
+  }, [currentUser, loginModal, admission]);
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
-        <div className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-slate-100 transition cursor-pointer">
+        <div
+          onClick={onAdmission}
+          className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-slate-100 transition cursor-pointer"
+        >
           Health BNB Profile
         </div>
         <div
@@ -27,18 +48,29 @@ const ProfileMenu = () => {
         >
           <AiOutlineMenu size={18} />
           <div className="hidden md:block">
-            <Avatar />
+            <Avatar src={currentUser?.image} />
           </div>
         </div>
       </div>
       {isOpen && (
         <div className="absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm">
           <div className="flex flex-col cursor-pointer">
-            <>
-              <ProfileItem label="Sign In" onClick={loginModal.onOpen} />
-              <ProfileItem label="Sign Up" onClick={registerModal.onOpen} />
-              <ProfileItem label="Log Out" onClick={() => {}} />
-            </>
+            {currentUser ? (
+              <>
+                <ProfileItem label="My trips" onClick={() => {}} />
+                <ProfileItem label="My favourites" onClick={() => {}} />
+                <ProfileItem label="My reservations" onClick={() => {}} />
+                <ProfileItem label="My clinics" onClick={() => {}} />
+                <ProfileItem label="Healthbnb Home" onClick={() => {}} />
+                <hr />
+                <ProfileItem label="Log Out" onClick={() => signOut()} />
+              </>
+            ) : (
+              <>
+                <ProfileItem label="Sign In" onClick={loginModal.onOpen} />
+                <ProfileItem label="Sign Up" onClick={registerModal.onOpen} />
+              </>
+            )}
           </div>
         </div>
       )}

@@ -14,10 +14,13 @@ import Input from "../input/Input";
 import { toast } from "react-hot-toast";
 import Button from "../Button";
 import useLoginModal from "@/app/hooks/useLoginModal";
+
 import { useRouter } from "next/navigation";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
 const LoginModal = () => {
   const router = useRouter();
   const loginModal = useLoginModal();
+  const registerModal = useRegisterModal();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -46,6 +49,10 @@ const LoginModal = () => {
     });
   };
 
+  const toggle = useCallback(() => {
+    loginModal.onClose();
+    registerModal.onOpen();
+  }, [loginModal, registerModal]);
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading
@@ -80,22 +87,22 @@ const LoginModal = () => {
         icon={FcGoogle}
         outline
         label="Continue with Google"
-        onClick={() => console.log("I was clicked")}
+        onClick={() => signIn("google")}
       />
 
       <Button
         icon={AiFillGithub}
         outline
         label="Continue with Github"
-        onClick={() => console.log("I was clicked")}
+        onClick={() => signIn("github")}
       />
-      <div className="flex justify-center flex-row items-center gap-3">
-        <div>Do not have an account ?</div>
+      <div className="flex  justify-center flex-row items-center gap-3">
+        <div>Do&apos;nt have an account ?</div>
         <div
-          onClick={loginModal.onClose}
+          onClick={toggle}
           className="text-green-700 cursor-pointer hover:underline"
         >
-          Sign Up
+          Create an account
         </div>
       </div>
     </div>

@@ -12,8 +12,11 @@ import Heading from "../Heading";
 import Input from "../input/Input";
 import { toast } from "react-hot-toast";
 import Button from "../Button";
+import useLoginModal from "@/app/hooks/useLoginModal";
+import { signIn } from "next-auth/react";
 const RegisterModal = () => {
   const registerModal = useRegisterModal();
+  const loginModal = useLoginModal();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -30,7 +33,9 @@ const RegisterModal = () => {
     axios
       .post("/api/register", data)
       .then(() => {
+        toast.success("Registered!");
         registerModal.onClose();
+        loginModal.onOpen();
       })
       .catch((error) => {
         toast.error(error.message);
@@ -40,6 +45,10 @@ const RegisterModal = () => {
       });
   };
 
+  const toggle = useCallback(() => {
+    registerModal.onClose();
+    loginModal.onOpen();
+  }, [loginModal, registerModal])
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading
@@ -82,26 +91,26 @@ const RegisterModal = () => {
         icon={FcGoogle}
         outline
         label="Continue with Google"
-        onClick={() => console.log("I was clicked")}
+        onClick={() => signIn("google")}
       />
 
       <Button
         icon={AiFillGithub}
         outline
         label="Continue with Github"
-        onClick={() => console.log("I was clicked")}
+        onClick={() => signIn("github")}
       />
       <div className="flex justify-center flex-row items-center gap-3">
         <div>Already have an account ?</div>
         <div
-          onClick={registerModal.onClose}
+          onClick={toggle}
           className="text-green-700 cursor-pointer hover:underline"
         >
           Log in
         </div>
       </div>
     </div>
-  );
+  ); 
   return (
     <>
       <Modal
