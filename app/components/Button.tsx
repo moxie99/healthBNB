@@ -5,7 +5,7 @@ interface ButtonProps {
   label?: string;
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
-  outline: boolean;
+  outline?: boolean;
   small?: boolean;
   icon?: IconType;
 }
