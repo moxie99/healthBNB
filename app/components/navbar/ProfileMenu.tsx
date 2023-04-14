@@ -31,8 +31,8 @@ const ProfileMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
 
     // open admission modal
 
-     admissionModal.onOpen();
-  }, [currentUser, loginModal, admission]);
+    admissionModal.onOpen();
+  }, [currentUser, loginModal, admissionModal]);
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
@@ -61,7 +61,10 @@ const ProfileMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                 <ProfileItem label="My favourites" onClick={() => {}} />
                 <ProfileItem label="My reservations" onClick={() => {}} />
                 <ProfileItem label="My clinics" onClick={() => {}} />
-                <ProfileItem label="Healthbnb Home" onClick={() => {}} />
+                <ProfileItem
+                  label="Healthbnb Home"
+                  onClick={admissionModal.onOpen}
+                />
                 <hr />
                 <ProfileItem label="Log Out" onClick={() => signOut()} />
               </>
