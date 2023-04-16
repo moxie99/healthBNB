@@ -76,7 +76,6 @@ const AdmissionModal = () => {
         admissionModal.onClose();
       })
       .catch((error) => {
-        console.log("data", data);
         toast.error("There seems to be an error, try agin later");
       })
       .finally(() => {

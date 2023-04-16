@@ -14,8 +14,6 @@ export default async function Home({ searchParams }: HomeProps) {
 
   const currentUser = await getCurrentUser();
 
-  console.log("listings", listings);
-
   if (listings?.length === 0) {
     return (
       <ClientOnly>
