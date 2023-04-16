@@ -11,9 +11,7 @@ export interface IListingsParams {
   category?: string;
 }
 
-export default async function getListings(
-  params: IListingsParams
-) {
+export default async function getListings(params: IListingsParams) {
   try {
     const {
       userId,
@@ -76,9 +74,8 @@ export default async function getListings(
         }
       }
     }
-    if (typeof userId !== 'undefined') {
-      query.userId = userId;
-    }
+
+    
 
     const listings = await prisma.listing.findMany({
       where: query,
