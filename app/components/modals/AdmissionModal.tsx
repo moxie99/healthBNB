@@ -111,7 +111,7 @@ const AdmissionModal = () => {
       dynamic(() => import("../Map"), {
         ssr: false,
       }),
-    [location]
+    []
   );
 
   const secondaryActionLabel = useMemo(() => {

@@ -76,6 +76,9 @@ export default async function getListings(
         }
       }
     }
+    if (typeof userId !== 'undefined') {
+      query.userId = userId;
+    }
 
     const listings = await prisma.listing.findMany({
       where: query,
