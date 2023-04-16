@@ -2,12 +2,12 @@ import prisma from "@/app/libs/prismadb";
 
 export interface IListingsParams {
   userId?: string;
-  bedCountPerRoom?: number;
   unitCount?: number;
   wardCount?: number;
+  bedCountPerRoom?: number;
+  locationValue?: string;
   startDate?: string;
   endDate?: string;
-  locationValue?: string;
   category?: string;
 }
 
