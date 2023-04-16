@@ -8,6 +8,7 @@ import ToasterProvider from "./providers/ToastProvider";
 import LoginModal from "./components/modals/LoginModal";
 import getCurrentUser from "./actions/getCurrentUser";
 import AdmissionModal from "./components/modals/AdmissionModal";
+import SearchModal from "./components/modals/SearchModal";
 
 export const metadata = {
   title: "HealthBNB",
@@ -33,6 +34,7 @@ export default async function RootLayout({
           <AdmissionModal />
           <RegisterModal />
           <LoginModal />
+          <SearchModal />
           <Navbar currentUser={currentUser} />
         </ClientOnly>
         <div className="pb-20 pt-28">{children}</div>
