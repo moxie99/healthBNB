@@ -1,15 +1,19 @@
 "use client";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import useAdmissionModal from "@/app/hooks/useAdmissionModal";
 import Modal from "./Modal";
-import { useState } from "react";
+import axios from "axios";
 import Heading from "../Heading";
 import { hospitalUnits } from "../navbar/Categories";
 import CategoryInput from "../input/CategoryInput";
 import SelectCountry from "../input/SelectCountry";
-import { useForm, FieldValues } from "react-hook-form";
+import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
 import dynamic from "next/dynamic";
 import Counter from "../Counter";
+import ImageUpload from "../input/ImageUpload";
+import Input from "../input/Input";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 enum STEPS {
   CATEGORY = 0,
   LOCATION = 1,
@@ -20,25 +24,9 @@ enum STEPS {
 }
 
 const AdmissionModal = () => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const admissionModal = useAdmissionModal();
-
-  const [step, setStep] = useState(STEPS.CATEGORY);
-
-  const onPrevious = () => {
-    setStep((value) => value - 1);
-  };
-
-  const onNext = () => {
-    setStep((value) => value + 1);
-  };
-
-  const actionLabel = useMemo(() => {
-    if (step === STEPS.PRICE) {
-      return "CREATE";
-    }
-
-    return "NEXT";
-  }, [step]);
 
   const {
     register,
@@ -61,11 +49,55 @@ const AdmissionModal = () => {
     },
   });
 
+  const [step, setStep] = useState(STEPS.CATEGORY);
+
+  const onPrevious = () => {
+    setStep((value) => value - 1);
+  };
+
+  const onNext = () => {
+    setStep((value) => value + 1);
+  };
+
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    if (step !== STEPS.PRICE) {
+      return onNext();
+    }
+
+    setIsLoading(true);
+
+    axios
+      .post("/api/listings", data)
+      .then(() => {
+        toast.success("Facility Created!");
+        router.refresh();
+        reset();
+        setStep(STEPS.CATEGORY);
+        admissionModal.onClose();
+      })
+      .catch((error) => {
+        console.log("data", data);
+        toast.error("There seems to be an error, try agin later");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  const actionLabel = useMemo(() => {
+    if (step === STEPS.PRICE) {
+      return "CREATE";
+    }
+
+    return "NEXT";
+  }, [step]);
+
   const category = watch("category");
   const location = watch("location");
   const bedCountPerRoom = watch("bedCountPerRoom");
-  const wardCount = watch("wardCount")
-  const unitCount = watch("unitCount")
+  const wardCount = watch("wardCount");
+  const unitCount = watch("unitCount");
+  const imageSrc = watch("imageSrc");
 
   const setCustomValue = (id: string, value: any) => {
     setValue(id, value, {
@@ -160,11 +192,79 @@ const AdmissionModal = () => {
     );
   }
 
+  if (step === STEPS.IMAGES) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Add a photo of the medical facility"
+          subtitle="Show the world what the medical faility looks like"
+        />
+
+        <ImageUpload
+          value={imageSrc}
+          onChange={(value) => setCustomValue("imageSrc", value)}
+        />
+      </div>
+    );
+  }
+
+  if (step === STEPS.DESCRIPTION) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Medical facility Description"
+          subtitle="How would you describe your medical facility?"
+        />
+
+        <Input
+          id="title"
+          label="Title"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+
+        <hr />
+
+        <Input
+          id="description"
+          label="Description"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+      </div>
+    );
+  }
+
+  if (step === STEPS.PRICE) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Price per session"
+          subtitle="Please, set a price for a session"
+        />
+        <Input
+          id="price"
+          label="Price"
+          formatPrice
+          type="number"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+      </div>
+    );
+  }
+
   return (
     <Modal
       title="HealthBNB your health is priority"
       isOpen={admissionModal.isOpen}
-      onSubmit={onNext}
+      onSubmit={handleSubmit(onSubmit)}
       onClose={admissionModal.onClose}
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}

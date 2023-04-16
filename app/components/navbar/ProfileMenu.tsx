@@ -9,12 +9,14 @@ import { User } from "@prisma/client";
 import { signOut } from "next-auth/react";
 import { SafeUser } from "@/app/types";
 import useAdmissionModal from "@/app/hooks/useAdmissionModal";
+import { useRouter } from "next/navigation";
 
 interface UserMenuProps {
   currentUser?: SafeUser | null;
 }
 const ProfileMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const toggleOpen = useCallback(() => {
     setIsOpen((value) => !value);
@@ -57,10 +59,22 @@ const ProfileMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
           <div className="flex flex-col cursor-pointer">
             {currentUser ? (
               <>
-                <ProfileItem label="My trips" onClick={() => {}} />
-                <ProfileItem label="My favourites" onClick={() => {}} />
-                <ProfileItem label="My reservations" onClick={() => {}} />
-                <ProfileItem label="My clinics" onClick={() => {}} />
+                <ProfileItem
+                  label="My trips"
+                  onClick={() => router.push("/trips")}
+                />
+                <ProfileItem
+                  label="My favourites"
+                  onClick={() => router.push("/favorites")}
+                />
+                <ProfileItem
+                  label="My reservations"
+                  onClick={() => router.push("/reservations")}
+                />
+                <ProfileItem
+                  label="My facilities"
+                  onClick={() => router.push("/facilities")}
+                />
                 <ProfileItem
                   label="Healthbnb Home"
                   onClick={admissionModal.onOpen}
