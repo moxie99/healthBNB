@@ -2,9 +2,9 @@ import prisma from "@/app/libs/prismadb";
 
 export interface IListingsParams {
   userId?: string;
-  wardCount?: number;
-  unitCount?: number;
   bedCountPerRoom?: number;
+  unitCount?: number;
+  wardCount?: number;
   startDate?: string;
   endDate?: string;
   locationValue?: string;
@@ -60,7 +60,7 @@ export default async function getListings(
 
     if (startDate && endDate) {
       query.NOT = {
-        reservation: {
+        reservations: {
           some: {
             OR: [
               {
