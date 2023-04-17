@@ -11,7 +11,10 @@ interface HomeProps {
 }
 
 const Home = async ({ searchParams }: HomeProps) => {
+
+  console.log("sss", searchParams);
   const listings = await getListings(searchParams);
+  
   const currentUser = await getCurrentUser();
 
   if (listings.length === 0) {

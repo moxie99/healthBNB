@@ -14,21 +14,17 @@ export interface IListingsParams {
 export default async function getListings(params: IListingsParams) {
   try {
     const {
-      userId,
+      // userId,
       unitCount, 
       wardCount, 
       bedCountPerRoom, 
       locationValue,
       startDate,
       endDate,
-      category,
+       category,
     } = params;
 
     let query: any = {};
-
-    if (userId) {
-      query.userId = userId;
-    }
 
     if (category) {
       query.category = category;
@@ -58,7 +54,7 @@ export default async function getListings(params: IListingsParams) {
 
     if (startDate && endDate) {
       query.NOT = {
-        reservations: {
+        reservation: {
           some: {
             OR: [
               {
